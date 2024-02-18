@@ -16,5 +16,15 @@ const onCloseSignal = () => {
   setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
 };
 
+const onCaughtSignal = () => {
+  logger.info('uncaughtException received, shutting down');
+  server.close(() => {
+    logger.info('server closed');
+    process.exit();
+  });
+  setTimeout(() => process.exit(1), 5000).unref(); // Force shutdown after 5s
+};
+
 process.on('SIGINT', onCloseSignal);
 process.on('SIGTERM', onCloseSignal);
+process.on('uncaughtException', onCaughtSignal);
